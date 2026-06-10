@@ -18,7 +18,7 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
   const [idCheckStatus, setIdCheckStatus] = useState<'NONE'|'CHECKING'|'AVAILABLE'|'UNAVAILABLE'>('NONE');
   const [loading, setLoading] = useState(false);
 
-  const isFormValid = formData.name && formData.gender && formData.id && formData.password && formData.consent && idCheckStatus === 'AVAILABLE';
+  const isFormValid = formData.name && formData.gender && formData.id.length >= 7 && formData.password.length >= 7 && formData.consent && idCheckStatus === 'AVAILABLE';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -35,8 +35,8 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
   };
 
   const handleIdCheck = async () => {
-    if (!formData.id) {
-      alert('아이디를 입력해주세요.');
+    if (!formData.id || formData.id.length < 7) {
+      alert('아이디는 최소 7자 이상 입력해주세요.');
       return;
     }
 
@@ -130,10 +130,10 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-2">아이디</label>
+            <label className="block text-sm text-gray-400 mb-2">아이디 (7자 이상)</label>
             <div className="flex gap-2">
               <input 
-                type="text" name="id" value={formData.id} onChange={handleChange}
+                type="text" name="id" value={formData.id} onChange={handleChange} placeholder="최소 7자 이상"
                 className="flex-1 p-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-cyan-400 focus:outline-none"
               />
               <button 
@@ -148,9 +148,9 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-2">비밀번호</label>
+            <label className="block text-sm text-gray-400 mb-2">비밀번호 (7자 이상)</label>
             <input 
-              type="password" name="password" value={formData.password} onChange={handleChange}
+              type="password" name="password" value={formData.password} onChange={handleChange} placeholder="최소 7자 이상"
               className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-cyan-400 focus:outline-none"
             />
           </div>

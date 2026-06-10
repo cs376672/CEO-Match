@@ -44,7 +44,7 @@ function doPost(e) {
 
   try {
     if (action === "check_id") {
-      const idExists = rows.some(row => row[1] === data.id);
+      const idExists = rows.some(row => String(row[1]).toLowerCase() === String(data.id).toLowerCase());
       if (idExists) {
         response = { success: false, message: "이미 존재하는 아이디입니다." };
       } else {
@@ -52,7 +52,7 @@ function doPost(e) {
       }
     } 
     else if (action === "signup") {
-      const idExists = rows.some(row => row[1] === data.id);
+      const idExists = rows.some(row => String(row[1]).toLowerCase() === String(data.id).toLowerCase());
       if (idExists) {
         response = { success: false, message: "이미 존재하는 아이디입니다." };
       } else {
@@ -69,7 +69,7 @@ function doPost(e) {
       }
     }
     else if (action === "login") {
-      const user = rows.find(row => row[1] === data.id);
+      const user = rows.find(row => String(row[1]).toLowerCase() === String(data.id).toLowerCase());
       if (!user) {
         response = { success: false, message: "존재하지 않는 아이디입니다." };
       } else if (String(user[2]) !== String(data.password)) {
@@ -79,7 +79,7 @@ function doPost(e) {
       }
     }
     else if (action === "find_pw") {
-      const user = rows.find(row => row[1] === data.id && row[3] === data.name);
+      const user = rows.find(row => String(row[1]).toLowerCase() === String(data.id).toLowerCase() && String(row[3]) === String(data.name));
       if (!user) {
         response = { success: false, message: "입력하신 정보와 일치하는 계정이 없습니다." };
       } else {
