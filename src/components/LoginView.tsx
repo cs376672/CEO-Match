@@ -56,7 +56,7 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-extrabold mb-3 leading-tight">
-          안티그래비티 <span className="primary-gradient-text">적성 테스트</span>
+          나의 숨겨진 <span className="primary-gradient-text">적성테스트</span>
         </h1>
         <p className="text-gray-300 font-light">
           나만의 숨겨진 잠재력과 성향을 발견해보세요

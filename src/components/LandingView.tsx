@@ -14,7 +14,7 @@ const LandingView: React.FC<Props> = ({ onStart }) => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
-          안티그래비티 <span className="primary-gradient-text">적성 테스트</span>
+          나의 숨겨진 <span className="primary-gradient-text">적성테스트</span>
         </h1>
         
         <p className="text-xl text-gray-300 mb-8 font-light">
