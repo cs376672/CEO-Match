@@ -14,12 +14,12 @@ const LandingView: React.FC<Props> = ({ onStart }) => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
-          Gravity-Free <span className="primary-gradient-text">CEO</span>
+          안티그래비티 <span className="primary-gradient-text">적성 테스트</span>
         </h1>
         
         <p className="text-xl text-gray-300 mb-8 font-light">
-          고정관념을 깨는 나만의 비즈니스 핏 찾기.<br className="hidden md:block" />
-          당신의 성향과 역량에 맞는 창업/부업 아이템을 알아보세요!
+          나만의 숨겨진 잠재력과 성향을 발견해보세요.<br className="hidden md:block" />
+          다양한 테스트를 통해 가장 잘 맞는 길을 찾아드립니다!
         </p>
 
         <div className="bg-white/10 p-6 rounded-xl mb-10 text-left w-full max-w-md">

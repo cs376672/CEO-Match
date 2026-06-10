@@ -56,10 +56,10 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-extrabold mb-3 leading-tight">
-          Gravity-Free <span className="primary-gradient-text">CEO</span>
+          안티그래비티 <span className="primary-gradient-text">적성 테스트</span>
         </h1>
         <p className="text-gray-300 font-light">
-          고정관념을 깨는 나만의 비즈니스 핏 찾기
+          나만의 숨겨진 잠재력과 성향을 발견해보세요
         </p>
       </div>
 
