@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LogIn, UserPlus, Key } from 'lucide-react';
+import { Rocket, UserPlus, Key } from 'lucide-react';
 import { ViewState } from '../App';
 import { API_URL } from '../config';
 
@@ -49,13 +49,24 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
 
   return (
     <div className="max-w-md w-full animate-float">
-      <div className="glass-card p-10 flex flex-col items-center">
-        <div className="w-20 h-20 mb-6 rounded-full primary-gradient-bg flex items-center justify-center shadow-[0_0_30px_rgba(0,242,254,0.5)]">
-          <LogIn className="w-10 h-10 text-white" />
+      {/* 타이틀 영역 (위에 적성 테스트) */}
+      <div className="text-center mb-8">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full primary-gradient-bg flex items-center justify-center shadow-[0_0_30px_rgba(0,242,254,0.5)]">
+          <Rocket className="w-10 h-10 text-white" />
         </div>
         
-        <h2 className="text-3xl font-extrabold mb-8 primary-gradient-text text-center">
-          Gravity Login
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 leading-tight">
+          Gravity-Free <span className="primary-gradient-text">CEO</span>
+        </h1>
+        <p className="text-gray-300 font-light">
+          고정관념을 깨는 나만의 비즈니스 핏 찾기
+        </p>
+      </div>
+
+      {/* 로그인 폼 영역 (밑에 로그인에는 그냥 로그인만) */}
+      <div className="glass-card p-8 flex flex-col items-center">
+        <h2 className="text-2xl font-bold mb-6 text-white w-full text-left">
+          로그인
         </h2>
         
         <form onSubmit={handleLogin} className="w-full space-y-4">
