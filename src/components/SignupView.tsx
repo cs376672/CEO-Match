@@ -18,7 +18,7 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
   const [idCheckStatus, setIdCheckStatus] = useState<'NONE'|'CHECKING'|'AVAILABLE'|'UNAVAILABLE'>('NONE');
   const [loading, setLoading] = useState(false);
 
-  const isFormValid = formData.name && formData.gender && formData.id.length >= 7 && formData.password.length >= 7 && formData.consent && idCheckStatus === 'AVAILABLE';
+  const isFormValid = formData.name && formData.gender && formData.id.length >= 7 && formData.password.length >= 7 && formData.consent && idCheckStatus === 'AVAILABLE' && formData.id.toLowerCase() !== formData.password.toLowerCase();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -69,6 +69,10 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.id.toLowerCase() === formData.password.toLowerCase()) {
+      alert('아이디와 비밀번호는 같을 수 없습니다.');
+      return;
+    }
     if (!isFormValid) return;
 
     if (API_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {

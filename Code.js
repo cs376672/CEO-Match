@@ -37,8 +37,8 @@ function doPost(e) {
   }
 
   const allData = sheet.getDataRange().getValues();
-  // 1행은 헤더이므로 제외
-  const rows = allData.slice(1);
+  // 사용자가 헤더를 삭제할 수 있으므로 전체 데이터를 대상으로 검색합니다.
+  const rows = allData;
 
   let response = { success: false, message: "Unknown action" };
 
@@ -52,10 +52,13 @@ function doPost(e) {
       }
     } 
     else if (action === "signup") {
-      const idExists = rows.some(row => String(row[1]).toLowerCase() === String(data.id).toLowerCase());
-      if (idExists) {
-        response = { success: false, message: "이미 존재하는 아이디입니다." };
+      if (String(data.id).toLowerCase() === String(data.password).toLowerCase()) {
+        response = { success: false, message: "아이디와 비밀번호는 같을 수 없습니다." };
       } else {
+        const idExists = rows.some(row => String(row[1]).toLowerCase() === String(data.id).toLowerCase());
+        if (idExists) {
+          response = { success: false, message: "이미 존재하는 아이디입니다." };
+        } else {
         // [Timestamp, ID, Password, Name, Gender, Consent]
         sheet.appendRow([
           new Date(),
