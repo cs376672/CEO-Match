@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00F2FE;
+  --color-secondary: #4FACFE;
+  --color-space-dark: #0B0B1E;
+  --color-space-light: #16163F;
+}
+
+body {
+  @apply bg-[#0B0B1E] text-white min-h-screen font-sans;
+  background-image: radial-gradient(circle at 50% 0%, #16163F 0%, #0B0B1E 70%);
+  background-attachment: fixed;
+}
+
+/* Glassmorphism utilities */
+.glass-card {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl;
+}
+
+.glass-button {
+  @apply bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-300 ease-out;
+}
+
+.primary-gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00F2FE] to-[#4FACFE];
+}
+
+.primary-gradient-bg {
+  @apply bg-gradient-to-r from-[#00F2FE] to-[#4FACFE] text-white;
+}
+
+/* Custom floating animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 3s;
+}

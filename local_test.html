@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Gravity-Free CEO (비즈핏 테스트)</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#00F2FE',
+            secondary: '#4FACFE',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background-color: #0B0B1E;
+      color: white;
+      min-height: 100vh;
+      font-family: sans-serif;
+      background-image: radial-gradient(circle at 50% 0%, #16163F 0%, #0B0B1E 70%);
+      background-attachment: fixed;
+    }
+    .glass-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .glass-button {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease-out;
+    }
+    .glass-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 242, 254, 0.5);
+      color: #00F2FE;
+    }
+    .primary-gradient-text {
+      background: linear-gradient(to right, #00F2FE, #4FACFE);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .primary-gradient-bg {
+      background: linear-gradient(to right, #00F2FE, #4FACFE);
+      color: white;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    .animate-float-delayed {
+      animation: float 6s ease-in-out infinite;
+      animation-delay: 3s;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- DATA ---
+    const questions = [
+      { id: 1, axis: 'M', text: '당신이 생각하는 이상적인 첫 사업 자본금은?', choiceA: { text: '대출을 받아서라도 초기 세팅을 완벽하게!', value: 1 }, choiceB: { text: '리스크 최소화! 무자본이나 소자본으로 작게 시작', value: -1 } },
+      { id: 2, axis: 'M', text: '비즈니스 모델을 선택할 때 더 끌리는 쪽은?', choiceA: { text: '규모의 경제를 위한 인프라 구축과 투자', value: 1 }, choiceB: { text: '내 지식과 아이디어만으로 창출하는 가치', value: -1 } },
+      { id: 3, axis: 'M', text: '가게를 차린다면 어떤 형태가 좋을까?', choiceA: { text: '목 좋은 상권에 번듯한 오프라인 매장', value: 1 }, choiceB: { text: '집에서 노트북 하나로 운영하는 온라인 비즈니스', value: -1 } },
+      { id: 4, axis: 'S', text: '일할 때 가장 에너지를 얻는 순간은 언제인가요?', choiceA: { text: '새로운 사람을 만나고 설득해서 계약을 따낼 때', value: 1 }, choiceB: { text: '나만의 공간에서 콘텐츠를 기획하거나 문제를 해결할 때', value: -1 } },
+      { id: 5, axis: 'S', text: '나의 가장 강력한 무기는?', choiceA: { text: '뛰어난 화술과 사람의 마음을 얻는 네트워킹', value: 1 }, choiceB: { text: '깊이 있는 전문 지식과 꼼꼼한 분석력', value: -1 } },
+      { id: 6, axis: 'S', text: '고객 응대 상황에서 나는?', choiceA: { text: '직접 대면하여 친근하게 응대하는 것이 자신 있다', value: 1 }, choiceB: { text: '시스템이나 매뉴얼로 비대면 처리하는 것이 편하다', value: -1 } },
+      { id: 7, axis: 'R', text: '사업의 목표 수익률에 대한 당신의 생각은?', choiceA: { text: '실패 확률이 높아도 100배 이상의 초대박 성공!', value: 1 }, choiceB: { text: '폭발적이지 않아도 매달 꾸준히 들어오는 안정적 수익!', value: -1 } },
+      { id: 8, axis: 'R', text: '새로운 아이디어가 떠올랐을 때 나는?', choiceA: { text: '완벽하지 않아도 일단 부딪혀보고 수정한다', value: 1 }, choiceB: { text: '철저하게 시장을 분석하고 검증된 후에 시작한다', value: -1 } },
+      { id: 9, axis: 'R', text: '어떤 방식의 성장을 선호하나요?', choiceA: { text: '시장을 혁신하여 새로운 룰을 만드는 파괴적 성장', value: 1 }, choiceB: { text: '기존에 검증된 모델을 차용하여 리스크를 줄인 성장', value: -1 } },
+      { id: 10, axis: 'T', text: '아이템을 고를 때 당신의 기준은?', choiceA: { text: '요즘 힙하고 SNS에서 난리 난 트렌디한 아이템', value: 1 }, choiceB: { text: '유행 타지 않고 10년 뒤에도 수요가 있을 스테디 아이템', value: -1 } },
+      { id: 11, axis: 'T', text: '소셜 미디어(SNS)를 대하는 나의 태도는?', choiceA: { text: '매일 새로운 밈과 릴스를 챙겨보는 트렌드 세터', value: 1 }, choiceB: { text: 'SNS보다는 책이나 뉴스, 전문 커뮤니티가 편하다', value: -1 } },
+      { id: 12, axis: 'T', text: '디자인과 기능 중 더 중요한 것은?', choiceA: { text: '사람들의 시선을 확 사로잡는 매력적인 디자인과 감성', value: 1 }, choiceB: { text: '기본에 충실하고 변함없는 실용성과 기능', value: -1 } }
+    ];
+
+    const resultsData = {
+      IDEA_BANK: { id: 'IDEA_BANK', title: '방구석 아이디어 뱅크', subtitle: '노트북 하나면 우주도 정복 가능!', description: '혼자만의 공간에서 엄청난 가치를 창출하는 타입입니다. 초기 자본 없이도 무궁무진한 아이디어와 기획력으로 승부할 수 있습니다.', recommendedBusiness: ['지식창업', '전자책 출판', '콘텐츠 크리에이터', 'SaaS 개발'], strengths: ['초기 리스크가 거의 없음', '시공간의 제약이 없음', '높은 마진율'], weaknesses: ['초기 수익 창출까지 시간이 걸림', '자기 통제력이 매우 중요함'] },
+      INFLUENCER: { id: 'INFLUENCER', title: '트렌드 세터 인플루언서', subtitle: '내가 곧 브랜드이자 마케팅!', description: '사람들의 시선을 끌고 트렌드를 선도하는 능력이 탁월합니다. 본인의 감각을 믿고 소셜 미디어를 활용해 빠르게 시장을 장악해 보세요.', recommendedBusiness: ['SNS 마켓', '편집숍 운영', '미디어 커머스', '퍼스널 브랜딩'], strengths: ['강력한 팬덤 구축 가능', '유행에 빠르게 탑승하여 단기 수익 창출', '뛰어난 네트워킹'], weaknesses: ['트렌드 변화에 민감함', '지속적인 이미지 관리가 필요함'] },
+      ANALYST: { id: 'ANALYST', title: '치밀한 분석가형 CEO', subtitle: '데이터는 거짓말을 하지 않는다!', description: '감보다는 정확한 수치와 팩트를 기반으로 움직이는 타입입니다. 위험을 최소화하고 안정적이면서도 전문성을 요구하는 사업에 적합합니다.', recommendedBusiness: ['전문 컨설팅', '무역 대행', '데이터 분석 서비스', '프리랜서'], strengths: ['리스크 관리에 탁월함', '신뢰도 높은 서비스 제공', '지속 가능한 롱런 비즈니스'], weaknesses: ['영업과 마케팅에서 한계를 느낄 수 있음', '과도한 완벽주의로 실행이 늦어질 수 있음'] },
+      INNOVATOR: { id: 'INNOVATOR', title: '대박 아니면 쪽박! 혁신가', subtitle: '세상을 바꿀 유니콘은 바로 나!', description: '안전한 길보다는 하이리스크 하이리턴을 즐기는 승부사입니다. 뚜렷한 비전과 강력한 실행력으로 거대한 투자를 유치하고 플랫폼을 구축할 수 있습니다.', recommendedBusiness: ['IT 플랫폼 스타트업', '기술 벤처 창업', '혁신 제조/유통'], strengths: ['폭발적인 스케일업 가능성', '투자 유치를 통한 자본력 확보', '업계의 판도를 바꿀 파급력'], weaknesses: ['매우 높은 실패 리스크', '막대한 초기 자본과 시간 소요'] },
+      SALON_HOST: { id: 'SALON_HOST', title: '골목대장 사랑방 주인', subtitle: '사람 냄새 나는 따뜻한 공간의 지배자!', description: '오프라인 공간에서 사람들과 교류하며 가치를 만드는 것을 좋아합니다. 자신만의 취향과 감성이 담긴 힙한 공간을 운영하는 데 재능이 있습니다.', recommendedBusiness: ['독립서점', '감성 카페', '공유 공간 운영'], strengths: ['단골 고객층 확보 용이', '명확한 컨셉으로 지역 핫플 등극', '높은 직업 만족도'], weaknesses: ['입지 조건에 크게 좌우됨', '오프라인 매장 관리의 피로도'] },
+      SYSTEM_BUILDER: { id: 'SYSTEM_BUILDER', title: '안정제일 시스템 빌더', subtitle: '자본주의 시스템의 수혜자!', description: '본인이 직접 뛰기보다는 돈과 시스템이 일하게 만드는 것을 선호합니다. 검증된 모델을 도입하여 안정적인 현금 흐름을 창출하는 데 탁월합니다.', recommendedBusiness: ['무인 점포', '검증된 프랜차이즈 운영', '부동산 임대업'], strengths: ['검증된 모델로 리스크 최소화', '초기 세팅 후 시간적 자유 확보', '예측 가능한 수익'], weaknesses: ['비교적 높은 초기 자본 필요', '브랜드 본사의 방침에 의존적일 수 있음'] }
+    };
+
+    const calculateResult = (scores) => {
+      const M = scores.M > 0 ? '+' : '-';
+      const S = scores.S > 0 ? '+' : '-';
+      const R = scores.R > 0 ? '+' : '-';
+      const T = scores.T > 0 ? '+' : '-';
+      const combo = `${M}${S}${R}${T}`;
+
+      if (['++++', '+++-', '+-++', '+-+-'].includes(combo)) return resultsData.INNOVATOR;
+      if (['++-+', '-+-+'].includes(combo)) return resultsData.SALON_HOST;
+      if (['++--', '+--+', '+---'].includes(combo)) return resultsData.SYSTEM_BUILDER;
+      if (['-+++', '-++-'].includes(combo)) return resultsData.INFLUENCER;
+      if (['--++', '--+-', '---+'].includes(combo)) return resultsData.IDEA_BANK;
+      if (['-+--', '----'].includes(combo)) return resultsData.ANALYST;
+      return resultsData.IDEA_BANK;
+    };
+
+    // --- COMPONENTS ---
+    const LandingView = ({ onStart }) => (
+      <div className="max-w-2xl w-full text-center animate-float">
+        <div className="glass-card p-10 flex flex-col items-center">
+          <div className="w-24 h-24 mb-6 rounded-full primary-gradient-bg flex items-center justify-center shadow-[0_0_30px_rgba(0,242,254,0.5)]">
+            <span style={{fontSize: '3rem'}}>🚀</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+            Gravity-Free <span className="primary-gradient-text">CEO</span>
+          </h1>
+          <p className="text-xl text-gray-300 mb-8 font-light">
+            고정관념을 깨는 나만의 비즈니스 핏 찾기.<br className="hidden md:block" />
+            당신의 성향과 역량에 맞는 창업/부업 아이템을 알아보세요!
+          </p>
+          <button onClick={onStart} className="w-full max-w-xs py-4 rounded-full font-bold text-lg primary-gradient-bg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(79,172,254,0.4)] text-black">
+            테스트 시작하기
+          </button>
+        </div>
+      </div>
+    );
+
+    const QuizView = ({ onComplete }) => {
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [scores, setScores] = useState({ M: 0, S: 0, R: 0, T: 0 });
+      const [isAnimating, setIsAnimating] = useState(false);
+
+      const question = questions[currentIndex];
+      const progress = (currentIndex / questions.length) * 100;
+
+      const handleAnswer = (axis, value) => {
+        if (isAnimating) return;
+        setIsAnimating(true);
+        const newScores = { ...scores, [axis]: scores[axis] + value };
+        setScores(newScores);
+
+        setTimeout(() => {
+          if (currentIndex + 1 < questions.length) {
+            setCurrentIndex(currentIndex + 1);
+            setIsAnimating(false);
+          } else {
+            const result = calculateResult(newScores);
+            onComplete(newScores, result);
+          }
+        }, 400);
+      };
+
+      return (
+        <div className="max-w-2xl w-full">
+          <div className="mb-8">
+            <div className="flex justify-between text-sm text-gray-400 mb-2 font-medium">
+              <span>진행도</span>
+              <span>{currentIndex + 1} / {questions.length}</span>
+            </div>
+            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full primary-gradient-bg transition-all duration-500 ease-out rounded-full" style={{ width: `${progress}%` }}></div>
+            </div>
+          </div>
+          <div className={`transition-opacity duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className="glass-card p-8 md:p-12 min-h-[400px] flex flex-col justify-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center leading-relaxed">{question.text}</h2>
+              <div className="space-y-4">
+                <button onClick={() => handleAnswer(question.axis, question.choiceA.value)} className="w-full text-left p-5 rounded-xl glass-button text-lg font-medium">A. {question.choiceA.text}</button>
+                <button onClick={() => handleAnswer(question.axis, question.choiceB.value)} className="w-full text-left p-5 rounded-xl glass-button text-lg font-medium">B. {question.choiceB.text}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const ResultView = ({ result, onRestart }) => {
+      useEffect(() => {
+        const duration = 3 * 1000;
+        const end = Date.now() + duration;
+        const frame = () => {
+          confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#00F2FE', '#4FACFE', '#ffffff'] });
+          confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#00F2FE', '#4FACFE', '#ffffff'] });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        };
+        frame();
+      }, []);
+
+      return (
+        <div className="max-w-3xl w-full animate-float-delayed pb-10">
+          <div className="glass-card p-8 md:p-12">
+            <div className="text-center mb-10 border-b border-white/10 pb-8">
+              <p className="text-[#00F2FE] font-bold mb-2 tracking-widest">당신의 비즈니스 핏은...</p>
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 primary-gradient-text drop-shadow-sm">{result.title}</h1>
+              <p className="text-xl text-gray-300 font-medium">"{result.subtitle}"</p>
+            </div>
+            <div className="mb-10 text-lg text-gray-200 leading-relaxed text-center">
+              <p>{result.description}</p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6 mb-10">
+              <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
+                <h3 className="font-bold text-xl mb-4 text-[#00F2FE]">✅ 강점 (Strengths)</h3>
+                <ul className="space-y-3 text-gray-300">
+                  {result.strengths.map((s, i) => <li key={i}>• {s}</li>)}
+                </ul>
+              </div>
+              <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
+                <h3 className="font-bold text-xl mb-4 text-purple-400">⚠️ 주의할 점 (Watch out)</h3>
+                <ul className="space-y-3 text-gray-300">
+                  {result.weaknesses.map((w, i) => <li key={i}>• {w}</li>)}
+                </ul>
+              </div>
+            </div>
+            <div className="bg-white/5 rounded-2xl p-6 mb-10 border border-white/10">
+              <h3 className="font-bold text-xl mb-6 text-yellow-400">💡 추천 아이템</h3>
+              <div className="flex flex-wrap gap-3">
+                {result.recommendedBusiness.map((biz, i) => (
+                  <span key={i} className="px-4 py-2 rounded-full bg-white/10 border border-white/10">{biz}</span>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-center mt-12">
+              <button onClick={onRestart} className="py-4 px-8 rounded-full font-bold text-lg primary-gradient-bg hover:scale-105 transition-transform text-black shadow-[0_0_20px_rgba(79,172,254,0.3)]">
+                🔄 테스트 다시하기
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const App = () => {
+      const [view, setView] = useState('LANDING');
+      const [scores, setScores] = useState({ M: 0, S: 0, R: 0, T: 0 });
+      const [result, setResult] = useState(null);
+
+      const startQuiz = () => { setScores({ M: 0, S: 0, R: 0, T: 0 }); setView('QUIZ'); };
+      const finishQuiz = (s, r) => { setScores(s); setResult(r); setView('RESULT'); };
+
+      return (
+        <div className="relative overflow-hidden min-h-screen">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+          
+          <main className="relative z-10 container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center">
+            {view === 'LANDING' && <LandingView onStart={startQuiz} />}
+            {view === 'QUIZ' && <QuizView onComplete={finishQuiz} />}
+            {view === 'RESULT' && result && <ResultView result={result} onRestart={startQuiz} />}
+          </main>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
