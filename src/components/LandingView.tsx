@@ -13,11 +13,11 @@ const LandingView: React.FC<Props> = ({ onStart }) => {
           <Rocket className="w-12 h-12 text-white" />
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight whitespace-nowrap tracking-tight">
           나의 숨겨진 <span className="primary-gradient-text">적성테스트</span>
         </h1>
         
-        <p className="text-xl text-gray-300 mb-8 font-light">
+        <p className="text-xl text-gray-300 mb-8 font-light break-keep">
           나만의 숨겨진 잠재력과 성향을 발견해보세요.<br className="hidden md:block" />
           다양한 테스트를 통해 가장 잘 맞는 길을 찾아드립니다!
         </p>

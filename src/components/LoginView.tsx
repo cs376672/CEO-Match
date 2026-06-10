@@ -55,10 +55,10 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
           <Rocket className="w-10 h-10 text-white" />
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 leading-tight whitespace-nowrap tracking-tight">
           나의 숨겨진 <span className="primary-gradient-text">적성테스트</span>
         </h1>
-        <p className="text-gray-300 font-light">
+        <p className="text-gray-300 font-light break-keep">
           나만의 숨겨진 잠재력과 성향을 발견해보세요
         </p>
       </div>
