@@ -24,6 +24,7 @@ const SignupView: React.FC<Props> = ({ onChangeView }) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
+      // @ts-ignore
       [name]: type === 'checkbox' ? checked : value
     }));
     
