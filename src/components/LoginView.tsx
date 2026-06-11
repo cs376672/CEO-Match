@@ -22,7 +22,9 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
     
     if (API_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
        alert("개발 모드: 구글 시트 연동 전이므로 바로 메인 화면으로 진입합니다.");
-       if (onLoginSuccess) onLoginSuccess(id || 'guest');
+       const guestId = id || 'guest';
+       localStorage.setItem('currentUser', guestId);
+       if (onLoginSuccess) onLoginSuccess(guestId);
        onChangeView('SELECTION');
        return;
     }
@@ -38,6 +40,7 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
       
       if (data.success) {
         alert(`${data.userName}님, 환영합니다!`);
+        localStorage.setItem('currentUser', id);
         if (onLoginSuccess) onLoginSuccess(id);
         onChangeView('SELECTION');
       } else {

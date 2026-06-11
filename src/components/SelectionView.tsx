@@ -1,15 +1,25 @@
 import React from 'react';
-import { Briefcase, Cat } from 'lucide-react';
+import { Briefcase, Cat, LogOut } from 'lucide-react';
 import { TestType } from '../types';
 
 interface Props {
   onSelect: (testType: TestType) => void;
+  onLogout?: () => void;
 }
 
-const SelectionView: React.FC<Props> = ({ onSelect }) => {
+const SelectionView: React.FC<Props> = ({ onSelect, onLogout }) => {
   return (
-    <div className="w-full max-w-4xl px-4 animate-fade-in flex flex-col items-center">
-      <div className="text-center mb-12">
+    <div className="w-full max-w-4xl px-4 animate-fade-in flex flex-col items-center relative">
+      {onLogout && (
+        <button 
+          onClick={onLogout}
+          className="absolute top-0 right-4 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <LogOut className="w-4 h-4" /> 로그아웃
+        </button>
+      )}
+
+      <div className="text-center mb-12 mt-8">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
           테스트 선택
         </h1>

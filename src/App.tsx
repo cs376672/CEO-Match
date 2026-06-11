@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LoginView from './components/LoginView';
 import SignupView from './components/SignupView';
 import FindPwView from './components/FindPwView';
@@ -17,10 +17,25 @@ function App() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [testType, setTestType] = useState<TestType | null>(null);
 
+  // 자동 로그인 확인
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      setCurrentUser(savedUser);
+      setView('SELECTION');
+    }
+  }, []);
+
   const handleSelectTest = (type: TestType) => {
     setTestType(type);
     setScores({});
     setView('QUIZ');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+    setView('LOGIN');
   };
 
   const finishQuiz = (finalScores: Scores, finalResult: ResultType) => {
@@ -50,7 +65,7 @@ function App() {
         {view === 'LOGIN' && <LoginView onChangeView={setView} onLoginSuccess={setCurrentUser} />}
         {view === 'SIGNUP' && <SignupView onChangeView={setView} />}
         {view === 'FIND_PW' && <FindPwView onChangeView={setView} />}
-        {view === 'SELECTION' && <SelectionView onSelect={handleSelectTest} />}
+        {view === 'SELECTION' && <SelectionView onSelect={handleSelectTest} onLogout={handleLogout} />}
         {view === 'QUIZ' && testType && <QuizView testType={testType} onComplete={finishQuiz} />}
         {view === 'RESULT' && result && testType && currentUser && (
           <ResultView result={result} testType={testType} userId={currentUser} onRestart={handleRestart} />
