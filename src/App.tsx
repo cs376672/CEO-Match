@@ -6,6 +6,8 @@ import SelectionView from './components/SelectionView';
 import QuizView from './components/QuizView';
 import ResultView from './components/ResultView';
 import { ResultType, Scores, TestType } from './types';
+import { animalResults } from './data/animalResults';
+import { resultsData as businessResults } from './data/results';
 
 export type ViewState = 'LOGIN' | 'SIGNUP' | 'FIND_PW' | 'SELECTION' | 'QUIZ' | 'RESULT';
 
@@ -19,6 +21,29 @@ function App() {
 
   // 자동 로그인 확인
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedResultId = params.get('resultId');
+    const sharedTestType = params.get('testType') as TestType;
+
+    if (sharedResultId && sharedTestType) {
+      let sharedResult: ResultType | null = null;
+      if (sharedTestType === 'ANIMAL') {
+        const found = Object.values(animalResults).find(r => r.id === sharedResultId);
+        if (found) sharedResult = found;
+      } else if (sharedTestType === 'BUSINESS') {
+        const found = Object.values(businessResults).find(r => r.id === sharedResultId);
+        if (found) sharedResult = found;
+      }
+
+      if (sharedResult) {
+        setResult(sharedResult);
+        setTestType(sharedTestType);
+        setCurrentUser('guest');
+        setView('RESULT');
+        return;
+      }
+    }
+
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       setCurrentUser(savedUser);
@@ -41,12 +66,19 @@ function App() {
   const finishQuiz = (finalScores: Scores, finalResult: ResultType) => {
     setScores(finalScores);
     setResult(finalResult);
+    window.history.replaceState({}, document.title, window.location.pathname);
     setView('RESULT');
   };
 
   const handleRestart = () => {
-    setView('SELECTION');
-    setTestType(null);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    if (currentUser === 'guest') {
+      setView('LOGIN');
+      setCurrentUser(null);
+    } else {
+      setView('SELECTION');
+      setTestType(null);
+    }
   };
 
   return (

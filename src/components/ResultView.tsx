@@ -61,7 +61,8 @@ const ResultView: React.FC<Props> = ({ result, testType, userId, onRestart }) =>
   }, [result, testType, userId]);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    const shareUrl = `${window.location.origin}?resultId=${result.id}&testType=${testType}`;
+    navigator.clipboard.writeText(shareUrl);
     alert('테스트 링크가 복사되었습니다! 친구들에게 공유해보세요.');
   };
 
