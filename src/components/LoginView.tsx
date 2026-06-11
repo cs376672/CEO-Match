@@ -11,6 +11,7 @@ interface Props {
 const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const [autoLogin, setAutoLogin] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -23,7 +24,9 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
     if (API_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
        alert("개발 모드: 구글 시트 연동 전이므로 바로 메인 화면으로 진입합니다.");
        const guestId = id || 'guest';
-       localStorage.setItem('currentUser', guestId);
+       if (autoLogin) {
+         localStorage.setItem('currentUser', guestId);
+       }
        if (onLoginSuccess) onLoginSuccess(guestId);
        onChangeView('SELECTION');
        return;
@@ -40,7 +43,9 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
       
       if (data.success) {
         alert(`${data.userName}님, 환영합니다!`);
-        localStorage.setItem('currentUser', id);
+        if (autoLogin) {
+          localStorage.setItem('currentUser', id);
+        }
         if (onLoginSuccess) onLoginSuccess(id);
         onChangeView('SELECTION');
       } else {
@@ -93,6 +98,19 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
             />
           </div>
           
+          <div className="flex items-center gap-2 px-1">
+            <input 
+              type="checkbox" 
+              id="autoLogin"
+              checked={autoLogin}
+              onChange={(e) => setAutoLogin(e.target.checked)}
+              className="w-4 h-4 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500 bg-white/5"
+            />
+            <label htmlFor="autoLogin" className="text-sm text-gray-300 cursor-pointer select-none">
+              자동 로그인
+            </label>
+          </div>
+          
           <button 
             type="submit" 
             disabled={loading}
@@ -103,11 +121,11 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
         </form>
 
         <div className="mt-8 flex gap-4 text-sm text-gray-400">
-          <button onClick={() => onChangeView('SIGNUP')} className="flex items-center gap-1 hover:text-cyan-400 transition-colors">
+          <button type="button" onClick={() => onChangeView('SIGNUP')} className="flex items-center gap-1 hover:text-cyan-400 transition-colors">
             <UserPlus className="w-4 h-4" /> 회원가입
           </button>
           <span>|</span>
-          <button onClick={() => onChangeView('FIND_PW')} className="flex items-center gap-1 hover:text-cyan-400 transition-colors">
+          <button type="button" onClick={() => onChangeView('FIND_PW')} className="flex items-center gap-1 hover:text-cyan-400 transition-colors">
             <Key className="w-4 h-4" /> 비밀번호 찾기
           </button>
         </div>
