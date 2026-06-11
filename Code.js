@@ -59,16 +59,17 @@ function doPost(e) {
         if (idExists) {
           response = { success: false, message: "이미 존재하는 아이디입니다." };
         } else {
-        // [Timestamp, ID, Password, Name, Gender, Consent]
-        sheet.appendRow([
-          new Date(),
-          data.id,
-          data.password,
-          data.name,
-          data.gender,
-          data.consent
-        ]);
-        response = { success: true, message: "회원가입이 완료되었습니다." };
+          // [Timestamp, ID, Password, Name, Gender, Consent]
+          sheet.appendRow([
+            new Date(),
+            data.id,
+            data.password,
+            data.name,
+            data.gender,
+            data.consent
+          ]);
+          response = { success: true, message: "회원가입이 완료되었습니다." };
+        }
       }
     }
     else if (action === "login") {
@@ -88,6 +89,17 @@ function doPost(e) {
       } else {
         response = { success: true, message: "비밀번호 찾기 성공", password: user[2] };
       }
+    }
+    else if (action === "save_result") {
+      let resultsSheet = ss.getSheetByName("Results");
+      if (!resultsSheet) {
+        resultsSheet = ss.insertSheet("Results");
+        resultsSheet.appendRow(["Timestamp", "ID", "TestType", "Result"]);
+        resultsSheet.getRange("A1:D1").setFontWeight("bold");
+        resultsSheet.setFrozenRows(1);
+      }
+      resultsSheet.appendRow([new Date(), data.id, data.testType, data.resultValue]);
+      response = { success: true, message: "결과 저장 성공" };
     }
   } catch (err) {
     response = { success: false, message: "Server Error: " + err.message };

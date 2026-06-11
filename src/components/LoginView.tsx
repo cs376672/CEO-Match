@@ -5,9 +5,10 @@ import { API_URL } from '../config';
 
 interface Props {
   onChangeView: (view: ViewState) => void;
+  onLoginSuccess?: (userId: string) => void;
 }
 
-const LoginView: React.FC<Props> = ({ onChangeView }) => {
+const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,8 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
     
     if (API_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
        alert("개발 모드: 구글 시트 연동 전이므로 바로 메인 화면으로 진입합니다.");
-       onChangeView('LANDING');
+       if (onLoginSuccess) onLoginSuccess(id || 'guest');
+       onChangeView('SELECTION');
        return;
     }
 
@@ -36,7 +38,8 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
       
       if (data.success) {
         alert(`${data.userName}님, 환영합니다!`);
-        onChangeView('LANDING');
+        if (onLoginSuccess) onLoginSuccess(id);
+        onChangeView('SELECTION');
       } else {
         alert(data.message || '로그인에 실패했습니다.');
       }
@@ -49,7 +52,6 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
 
   return (
     <div className="max-w-md w-full animate-float">
-      {/* 타이틀 영역 (위에 적성 테스트) */}
       <div className="text-center mb-8">
         <div className="w-20 h-20 mx-auto mb-6 rounded-full primary-gradient-bg flex items-center justify-center shadow-[0_0_30px_rgba(0,242,254,0.5)]">
           <Rocket className="w-10 h-10 text-white" />
@@ -63,7 +65,6 @@ const LoginView: React.FC<Props> = ({ onChangeView }) => {
         </p>
       </div>
 
-      {/* 로그인 폼 영역 (밑에 로그인에는 그냥 로그인만) */}
       <div className="glass-card p-8 flex flex-col items-center">
         <h2 className="text-2xl font-bold mb-6 text-white w-full text-left">
           로그인

@@ -1,5 +1,7 @@
-export type Axis = 'M' | 'S' | 'R' | 'T';
+export type Axis = string;
 export type Direction = 1 | -1;
+
+export type TestType = 'BUSINESS' | 'ANIMAL';
 
 export interface Question {
   id: number;
@@ -18,17 +20,14 @@ export interface Question {
 export interface ResultType {
   id: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
+  animal?: string;
   description: string;
-  recommendedBusiness: string[];
-  strengths: string[];
-  weaknesses: string[];
-  matchCombination: string[]; // e.g. ["M-", "S-", "R+", "T+"]
+  recommendedBusiness?: string[];
+  strengths?: string[];
+  weaknesses?: string[];
+  traits?: string[];
+  matchCombination: string[]; 
 }
 
-export type Scores = {
-  M: number;
-  S: number;
-  R: number;
-  T: number;
-};
+export type Scores = Record<string, number>;

@@ -2,20 +2,24 @@ import { useState } from 'react';
 import LoginView from './components/LoginView';
 import SignupView from './components/SignupView';
 import FindPwView from './components/FindPwView';
-import LandingView from './components/LandingView';
+import SelectionView from './components/SelectionView';
 import QuizView from './components/QuizView';
 import ResultView from './components/ResultView';
-import { ResultType, Scores } from './types';
+import { ResultType, Scores, TestType } from './types';
 
-export type ViewState = 'LOGIN' | 'SIGNUP' | 'FIND_PW' | 'LANDING' | 'QUIZ' | 'RESULT';
+export type ViewState = 'LOGIN' | 'SIGNUP' | 'FIND_PW' | 'SELECTION' | 'QUIZ' | 'RESULT';
 
 function App() {
   const [view, setView] = useState<ViewState>('LOGIN');
-  const [scores, setScores] = useState<Scores>({ M: 0, S: 0, R: 0, T: 0 });
+  const [, setScores] = useState<Scores>({});
   const [result, setResult] = useState<ResultType | null>(null);
+  
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [testType, setTestType] = useState<TestType | null>(null);
 
-  const startQuiz = () => {
-    setScores({ M: 0, S: 0, R: 0, T: 0 });
+  const handleSelectTest = (type: TestType) => {
+    setTestType(type);
+    setScores({});
     setView('QUIZ');
   };
 
@@ -23,6 +27,11 @@ function App() {
     setScores(finalScores);
     setResult(finalResult);
     setView('RESULT');
+  };
+
+  const handleRestart = () => {
+    setView('SELECTION');
+    setTestType(null);
   };
 
   return (
@@ -38,13 +47,13 @@ function App() {
       </div>
       
       <main className="relative z-10 container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center">
-        {view === 'LOGIN' && <LoginView onChangeView={setView} />}
+        {view === 'LOGIN' && <LoginView onChangeView={setView} onLoginSuccess={setCurrentUser} />}
         {view === 'SIGNUP' && <SignupView onChangeView={setView} />}
         {view === 'FIND_PW' && <FindPwView onChangeView={setView} />}
-        {view === 'LANDING' && <LandingView onStart={startQuiz} />}
-        {view === 'QUIZ' && <QuizView onComplete={finishQuiz} />}
-        {view === 'RESULT' && result && (
-          <ResultView result={result} scores={scores} onRestart={startQuiz} />
+        {view === 'SELECTION' && <SelectionView onSelect={handleSelectTest} />}
+        {view === 'QUIZ' && testType && <QuizView testType={testType} onComplete={finishQuiz} />}
+        {view === 'RESULT' && result && testType && currentUser && (
+          <ResultView result={result} testType={testType} userId={currentUser} onRestart={handleRestart} />
         )}
       </main>
     </div>
