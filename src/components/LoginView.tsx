@@ -26,6 +26,8 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
        const guestId = id || 'guest';
        if (autoLogin) {
          localStorage.setItem('currentUser', guestId);
+       } else {
+         localStorage.removeItem('currentUser');
        }
        if (onLoginSuccess) onLoginSuccess(guestId);
        onChangeView('SELECTION');
@@ -45,6 +47,8 @@ const LoginView: React.FC<Props> = ({ onChangeView, onLoginSuccess }) => {
         alert(`${data.userName}님, 환영합니다!`);
         if (autoLogin) {
           localStorage.setItem('currentUser', id);
+        } else {
+          localStorage.removeItem('currentUser');
         }
         if (onLoginSuccess) onLoginSuccess(id);
         onChangeView('SELECTION');
